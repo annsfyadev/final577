@@ -32,7 +32,6 @@ class Synonyms extends AbstractEndpoint
 	 * Deletes a synonym set
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonyms-set.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The id of the synonyms set to be deleted
@@ -60,7 +59,9 @@ class Synonyms extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['id'], $request, 'synonyms.delete_synonym');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -68,7 +69,6 @@ class Synonyms extends AbstractEndpoint
 	 * Deletes a synonym rule in a synonym set
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonym-rule.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     set_id: string, // (REQUIRED) The id of the synonym set to be updated
@@ -98,7 +98,9 @@ class Synonyms extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['set_id', 'rule_id'], $request, 'synonyms.delete_synonym_rule');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -106,7 +108,6 @@ class Synonyms extends AbstractEndpoint
 	 * Retrieves a synonym set
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonyms-set.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The name of the synonyms set to be retrieved
@@ -136,7 +137,9 @@ class Synonyms extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['id'], $request, 'synonyms.get_synonym');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -144,7 +147,6 @@ class Synonyms extends AbstractEndpoint
 	 * Retrieves a synonym rule from a synonym set
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonym-rule.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     set_id: string, // (REQUIRED) The id of the synonym set to retrieve the synonym rule from
@@ -174,7 +176,9 @@ class Synonyms extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['set_id', 'rule_id'], $request, 'synonyms.get_synonym_rule');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -182,7 +186,6 @@ class Synonyms extends AbstractEndpoint
 	 * Retrieves a summary of all defined synonym sets
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/list-synonyms-sets.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     from: int, // Starting offset
@@ -209,7 +212,9 @@ class Synonyms extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'synonyms.get_synonyms_sets');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -217,7 +222,6 @@ class Synonyms extends AbstractEndpoint
 	 * Creates or updates a synonyms set
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonyms-set.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     id: string, // (REQUIRED) The id of the synonyms set to be created or updated
@@ -247,7 +251,9 @@ class Synonyms extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['id'], $request, 'synonyms.put_synonym');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -255,7 +261,6 @@ class Synonyms extends AbstractEndpoint
 	 * Creates or updates a synonym rule in a synonym set
 	 *
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonym-rule.html
-	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
 	 *     set_id: string, // (REQUIRED) The id of the synonym set to be updated with the synonym rule
@@ -286,6 +291,8 @@ class Synonyms extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['set_id', 'rule_id'], $request, 'synonyms.put_synonym_rule');
+		return $this->client->sendRequest($request);
 	}
 }

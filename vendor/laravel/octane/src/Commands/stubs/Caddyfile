@@ -1,7 +1,7 @@
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
-	admin localhost:{$CADDY_SERVER_ADMIN_PORT}
+	admin {$CADDY_SERVER_ADMIN_HOST}:{$CADDY_SERVER_ADMIN_PORT}
 
 	frankenphp {
 		worker "{$APP_PUBLIC_PATH}/frankenphp-worker.php" {$CADDY_SERVER_WORKER_COUNT}
@@ -25,7 +25,7 @@
 
 	route {
 		root * "{$APP_PUBLIC_PATH}"
-		encode zstd gzip
+		encode zstd br gzip
 
 		# Mercure configuration is injected here...
 		{$CADDY_SERVER_EXTRA_DIRECTIVES}

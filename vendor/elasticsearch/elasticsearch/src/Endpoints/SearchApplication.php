@@ -60,7 +60,9 @@ class SearchApplication extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.delete');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -96,7 +98,9 @@ class SearchApplication extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.delete_behavioral_analytics');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -132,7 +136,9 @@ class SearchApplication extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.get');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -170,7 +176,9 @@ class SearchApplication extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.get_behavioral_analytics');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -206,13 +214,16 @@ class SearchApplication extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'search_application.list');
+		return $this->client->sendRequest($request);
 	}
 
 
 	/**
 	 * Creates a behavioral analytics event for existing collection.
 	 *
+	 * @see http://todo.com/tbd
 	 * @internal This API is EXPERIMENTAL and may be changed or removed completely in a future release
 	 *
 	 * @param array{
@@ -245,7 +256,9 @@ class SearchApplication extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['collection_name', 'event_type'], $request, 'search_application.post_behavioral_analytics_event');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -284,7 +297,9 @@ class SearchApplication extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.put');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -320,7 +335,9 @@ class SearchApplication extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.put_behavioral_analytics');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -358,7 +375,9 @@ class SearchApplication extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.render_query');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -370,6 +389,7 @@ class SearchApplication extends AbstractEndpoint
 	 *
 	 * @param array{
 	 *     name: string, // (REQUIRED) The name of the search application to be searched
+	 *     typed_keys: boolean, // Specify whether aggregation and suggester names should be prefixed by their respective types in the response
 	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -391,11 +411,13 @@ class SearchApplication extends AbstractEndpoint
 		$url = '/_application/search_application/' . $this->encode($params['name']) . '/_search';
 		$method = empty($params['body']) ? 'GET' : 'POST';
 
-		$url = $this->addQueryString($url, $params, ['pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['typed_keys','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'search_application.search');
+		return $this->client->sendRequest($request);
 	}
 }

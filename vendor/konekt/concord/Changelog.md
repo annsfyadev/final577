@@ -2,6 +2,11 @@
 
 ## 1.X Series
 
+### 1.15.0
+##### 2024-03-15
+
+- Added the controller hooks feature
+
 ### 1.14.0
 ##### 2024-01-08
 

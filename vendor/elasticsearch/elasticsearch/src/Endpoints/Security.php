@@ -59,7 +59,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.activate_user_profile');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -91,7 +93,85 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.authenticate');
+		return $this->client->sendRequest($request);
+	}
+
+
+	/**
+	 * Bulk delete roles in the native realm.
+	 *
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-bulk-delete-role.html
+	 *
+	 * @param array{
+	 *     refresh: enum, // If `true` (the default) then refresh the affected shards to make this operation visible to search, if `wait_for` then wait for a refresh to make this operation visible to search, if `false` then do nothing with refreshes.
+	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
+	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
+	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
+	 *     source: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
+	 *     filter_path: list, // A comma-separated list of filters used to reduce the response.
+	 *     body: array, // (REQUIRED) The roles to delete
+	 * } $params
+	 *
+	 * @throws NoNodeAvailableException if all the hosts are offline
+	 * @throws ClientResponseException if the status code of response is 4xx
+	 * @throws ServerResponseException if the status code of response is 5xx
+	 *
+	 * @return Elasticsearch|Promise
+	 */
+	public function bulkDeleteRole(array $params = [])
+	{
+		$this->checkRequiredParameters(['body'], $params);
+		$url = '/_security/role';
+		$method = 'DELETE';
+
+		$url = $this->addQueryString($url, $params, ['refresh','pretty','human','error_trace','source','filter_path']);
+		$headers = [
+			'Accept' => 'application/json',
+			'Content-Type' => 'application/json',
+		];
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.bulk_delete_role');
+		return $this->client->sendRequest($request);
+	}
+
+
+	/**
+	 * Bulk adds and updates roles in the native realm.
+	 *
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-bulk-put-role.html
+	 *
+	 * @param array{
+	 *     refresh: enum, // If `true` (the default) then refresh the affected shards to make this operation visible to search, if `wait_for` then wait for a refresh to make this operation visible to search, if `false` then do nothing with refreshes.
+	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
+	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
+	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
+	 *     source: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
+	 *     filter_path: list, // A comma-separated list of filters used to reduce the response.
+	 *     body: array, // (REQUIRED) The roles to add
+	 * } $params
+	 *
+	 * @throws NoNodeAvailableException if all the hosts are offline
+	 * @throws ClientResponseException if the status code of response is 4xx
+	 * @throws ServerResponseException if the status code of response is 5xx
+	 *
+	 * @return Elasticsearch|Promise
+	 */
+	public function bulkPutRole(array $params = [])
+	{
+		$this->checkRequiredParameters(['body'], $params);
+		$url = '/_security/role';
+		$method = 'POST';
+
+		$url = $this->addQueryString($url, $params, ['refresh','pretty','human','error_trace','source','filter_path']);
+		$headers = [
+			'Accept' => 'application/json',
+			'Content-Type' => 'application/json',
+		];
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.bulk_put_role');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -126,7 +206,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.bulk_update_api_keys');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -167,7 +249,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['username'], $request, 'security.change_password');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -202,7 +286,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['ids'], $request, 'security.clear_api_key_cache');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -237,7 +323,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['application'], $request, 'security.clear_cached_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -273,7 +361,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['realms'], $request, 'security.clear_cached_realms');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -308,7 +398,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.clear_cached_roles');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -345,7 +437,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['namespace', 'service', 'name'], $request, 'security.clear_cached_service_tokens');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -381,7 +475,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.create_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -416,7 +512,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.create_cross_cluster_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -458,7 +556,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['namespace', 'service', 'name'], $request, 'security.create_service_token');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -495,7 +595,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['application', 'name'], $request, 'security.delete_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -531,7 +633,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.delete_role');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -567,7 +671,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.delete_role_mapping');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -605,7 +711,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['namespace', 'service', 'name'], $request, 'security.delete_service_token');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -641,7 +749,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['username'], $request, 'security.delete_user');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -677,7 +787,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['username'], $request, 'security.disable_user');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -713,7 +825,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['uid'], $request, 'security.disable_user_profile');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -749,7 +863,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['username'], $request, 'security.enable_user');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -785,7 +901,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['uid'], $request, 'security.enable_user_profile');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -818,7 +936,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.enroll_kibana');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -851,7 +971,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.enroll_node');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -867,6 +989,8 @@ class Security extends AbstractEndpoint
 	 *     realm_name: string, // realm name of the user who created this API key to be retrieved
 	 *     owner: boolean, // flag to query API keys owned by the currently authenticated user
 	 *     with_limited_by: boolean, // flag to show the limited-by role descriptors of API Keys
+	 *     with_profile_uid: boolean, // flag to also retrieve the API Key's owner profile uid, if it exists
+	 *     active_only: boolean, // flag to limit response to only active (not invalidated or expired) API keys
 	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -885,11 +1009,13 @@ class Security extends AbstractEndpoint
 		$url = '/_security/api_key';
 		$method = 'GET';
 
-		$url = $this->addQueryString($url, $params, ['id','name','username','realm_name','owner','with_limited_by','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['id','name','username','realm_name','owner','with_limited_by','with_profile_uid','active_only','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.get_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -921,7 +1047,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.get_builtin_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -962,7 +1090,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['application', 'name'], $request, 'security.get_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -999,7 +1129,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.get_role');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1036,7 +1168,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.get_role_mapping');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1077,7 +1211,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['namespace', 'service'], $request, 'security.get_service_accounts');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1113,7 +1249,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['namespace', 'service'], $request, 'security.get_service_credentials');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1123,6 +1261,7 @@ class Security extends AbstractEndpoint
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-settings.html
 	 *
 	 * @param array{
+	 *     master_timeout: time, // Timeout for connection to master
 	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -1141,12 +1280,14 @@ class Security extends AbstractEndpoint
 		$url = '/_security/settings';
 		$method = 'GET';
 
-		$url = $this->addQueryString($url, $params, ['pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['master_timeout','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.get_settings');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1181,7 +1322,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.get_token');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1219,7 +1362,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['username'], $request, 'security.get_user');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1251,7 +1396,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.get_user_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1287,7 +1434,9 @@ class Security extends AbstractEndpoint
 		$headers = [
 			'Accept' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['uid'], $request, 'security.get_user_profile');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1323,7 +1472,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.grant_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1363,7 +1514,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['user'], $request, 'security.has_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1398,7 +1551,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.has_privileges_user_profile');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1433,7 +1588,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.invalidate_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1468,7 +1625,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.invalidate_token');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1503,7 +1662,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.oidc_authenticate');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1538,7 +1699,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.oidc_logout');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1573,7 +1736,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.oidc_prepare_authentication');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1601,7 +1766,7 @@ class Security extends AbstractEndpoint
 	public function putPrivileges(array $params = [])
 	{
 		$this->checkRequiredParameters(['body'], $params);
-		$url = '/_security/privilege/';
+		$url = '/_security/privilege';
 		$method = 'PUT';
 
 		$url = $this->addQueryString($url, $params, ['refresh','pretty','human','error_trace','source','filter_path']);
@@ -1609,7 +1774,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.put_privileges');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1647,7 +1814,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.put_role');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1685,7 +1854,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['name'], $request, 'security.put_role_mapping');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1723,7 +1894,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['username'], $request, 'security.put_user');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1734,6 +1907,8 @@ class Security extends AbstractEndpoint
 	 *
 	 * @param array{
 	 *     with_limited_by: boolean, // flag to show the limited-by role descriptors of API Keys
+	 *     with_profile_uid: boolean, // flag to also retrieve the API Key's owner profile uid, if it exists
+	 *     typed_keys: boolean, // flag to prefix aggregation names by their respective types in the response
 	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -1753,12 +1928,87 @@ class Security extends AbstractEndpoint
 		$url = '/_security/_query/api_key';
 		$method = empty($params['body']) ? 'GET' : 'POST';
 
-		$url = $this->addQueryString($url, $params, ['with_limited_by','pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['with_limited_by','with_profile_uid','typed_keys','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.query_api_keys');
+		return $this->client->sendRequest($request);
+	}
+
+
+	/**
+	 * Retrieves information for Roles using a subset of query DSL
+	 *
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-query-role.html
+	 *
+	 * @param array{
+	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
+	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
+	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
+	 *     source: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
+	 *     filter_path: list, // A comma-separated list of filters used to reduce the response.
+	 *     body: array, //  From, size, query, sort and search_after
+	 * } $params
+	 *
+	 * @throws NoNodeAvailableException if all the hosts are offline
+	 * @throws ClientResponseException if the status code of response is 4xx
+	 * @throws ServerResponseException if the status code of response is 5xx
+	 *
+	 * @return Elasticsearch|Promise
+	 */
+	public function queryRole(array $params = [])
+	{
+		$url = '/_security/_query/role';
+		$method = empty($params['body']) ? 'GET' : 'POST';
+
+		$url = $this->addQueryString($url, $params, ['pretty','human','error_trace','source','filter_path']);
+		$headers = [
+			'Accept' => 'application/json',
+			'Content-Type' => 'application/json',
+		];
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.query_role');
+		return $this->client->sendRequest($request);
+	}
+
+
+	/**
+	 * Retrieves information for Users using a subset of query DSL
+	 *
+	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-query-user.html
+	 *
+	 * @param array{
+	 *     with_profile_uid: boolean, // flag to retrieve profile uid (if exists) associated with the user
+	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
+	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
+	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
+	 *     source: string, // The URL-encoded request definition. Useful for libraries that do not accept a request body for non-POST requests.
+	 *     filter_path: list, // A comma-separated list of filters used to reduce the response.
+	 *     body: array, //  From, size, query, sort and search_after
+	 * } $params
+	 *
+	 * @throws NoNodeAvailableException if all the hosts are offline
+	 * @throws ClientResponseException if the status code of response is 4xx
+	 * @throws ServerResponseException if the status code of response is 5xx
+	 *
+	 * @return Elasticsearch|Promise
+	 */
+	public function queryUser(array $params = [])
+	{
+		$url = '/_security/_query/user';
+		$method = empty($params['body']) ? 'GET' : 'POST';
+
+		$url = $this->addQueryString($url, $params, ['with_profile_uid','pretty','human','error_trace','source','filter_path']);
+		$headers = [
+			'Accept' => 'application/json',
+			'Content-Type' => 'application/json',
+		];
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.query_user');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1793,7 +2043,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.saml_authenticate');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1828,7 +2080,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.saml_complete_logout');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1863,7 +2117,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.saml_invalidate');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1898,7 +2154,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.saml_logout');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1933,7 +2191,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.saml_prepare_authentication');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -1969,7 +2229,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['realm_name'], $request, 'security.saml_service_provider_metadata');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -2004,7 +2266,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.suggest_user_profiles');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -2041,7 +2305,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['id'], $request, 'security.update_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -2078,7 +2344,9 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['id'], $request, 'security.update_cross_cluster_api_key');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -2088,6 +2356,8 @@ class Security extends AbstractEndpoint
 	 * @see https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-update-settings.html
 	 *
 	 * @param array{
+	 *     master_timeout: time, // Timeout for connection to master
+	 *     timeout: time, // Timeout for acknowledgements from all nodes
 	 *     pretty: boolean, // Pretty format the returned JSON response. (DEFAULT: false)
 	 *     human: boolean, // Return human readable values for statistics. (DEFAULT: true)
 	 *     error_trace: boolean, // Include the stack trace of returned errors. (DEFAULT: false)
@@ -2108,12 +2378,14 @@ class Security extends AbstractEndpoint
 		$url = '/_security/settings';
 		$method = 'PUT';
 
-		$url = $this->addQueryString($url, $params, ['pretty','human','error_trace','source','filter_path']);
+		$url = $this->addQueryString($url, $params, ['master_timeout','timeout','pretty','human','error_trace','source','filter_path']);
 		$headers = [
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, [], $request, 'security.update_settings');
+		return $this->client->sendRequest($request);
 	}
 
 
@@ -2153,6 +2425,8 @@ class Security extends AbstractEndpoint
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		];
-		return $this->client->sendRequest($this->createRequest($method, $url, $headers, $params['body'] ?? null));
+		$request = $this->createRequest($method, $url, $headers, $params['body'] ?? null);
+		$request = $this->addOtelAttributes($params, ['uid'], $request, 'security.update_user_profile_data');
+		return $this->client->sendRequest($request);
 	}
 }
