@@ -2,20 +2,20 @@
 # .env
 # .env.testing
 # .idea
-# .php_cs.cache
-# .phpunit.result.cache
-# .vscode
-# .vagrant
-# *.hot
+.php_cs.cache
+.phpunit.result.cache
+.vscode
+.vagrant
+*.hot
 # /stubs
 # /data
-# /docker-compose-collection
-# Homestead.json
-# Homestead.yaml
-# /ignorables/*
-# /node_modules
-# npm-debug.log
-# package-lock.json
+/docker-compose-collection
+Homestead.json
+Homestead.yaml
+/ignorables/*
+/node_modules
+npm-debug.log
+package-lock.json
 # /public/css 
 # /public/js
 # /public/hot
@@ -25,5 +25,5 @@
 # /storage/*.key
 # /storage/dcc-data/
 # /vendor
-# yarn.lock
-# yarn-error.log
+yarn.lock
+yarn-error.log
